@@ -1,10 +1,5 @@
-ifeq ('$(OS), Windows_NT')
-	SHELL := powershell.exe
-	PACKAGE = $(shell (Get-Content go.mod -head 1).Split(" ")[1])
-else
-	SHELL := bash
-	PACKAGE = $(shell head -1 go.mod | awk '{print $$2}')
-endif
+# Change this to your own Go module
+GO_MODULE := my-protobuf
 
 .PHONY: tidy
 tidy:
@@ -20,14 +15,7 @@ endif
 
 .PHONY: protoc
 protoc:
-	protoc --go_opt=module=${PACKAGE} --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
-ifeq ($(OS), Windows_NT)
-	xcopy .\my-protobuf . /E
-	if exist "my-protobuf" rd /s /q my-protobuf	
-else
-	cp -fR ./my-protobuf .
-	rm -fR ./my-protobuf	
-endif
+	protoc --go_opt=module=${GO_MODULE} --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
 
 .PHONY: build
 build: clean protoc tidy
