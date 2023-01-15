@@ -1,3 +1,11 @@
+ifeq ('$(OS), Windows_NT')
+	SHELL := powershell.exe
+	PACKAGE = $(shell (Get-Content go.mod -head 1).Split(" ")[1])
+else
+	SHELL := bash
+	PACKAGE = $(shell head -1 go.mod | awk '{print $$2}')
+endif
+
 .PHONY: tidy
 tidy:
 	go mod tidy && go mod vendor  
@@ -12,7 +20,7 @@ endif
 
 .PHONY: protoc
 protoc:
-	protoc --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
+	protoc --go_opt=module=${PACKAGE} --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
 ifeq ($(OS), Windows_NT)
 	xcopy .\my-protobuf . /E
 	if exist "my-protobuf" rd /s /q my-protobuf	
