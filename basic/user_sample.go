@@ -6,11 +6,14 @@ import (
 	"my-protobuf/protogen/basic"
 	"time"
 
+	"google.golang.org/genproto/googleapis/type/date"
+	"google.golang.org/genproto/googleapis/type/latlng"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func BasicUser() {
@@ -26,6 +29,8 @@ func BasicUser() {
 
 	comm := randomCommunicationChannel()
 
+	sr := map[string]uint32{"fly": 5, "speed": 5, "durability": 4}
+
 	u := basic.User{
 		Id:                   99,
 		Username:             "superman",
@@ -35,6 +40,13 @@ func BasicUser() {
 		Emails:               []string{"superman@movie.com", "superman@dc.com"},
 		Addresss:             &addr,
 		CommunicationChannel: &comm,
+		SkillRating:          sr,
+		LastLoginTimestamp:   timestamppb.Now(),
+		BirthDate:            &date.Date{Year: 2000, Month: 4, Day: 18},
+		LastKnownLocation: &latlng.LatLng{
+			Latitude:  -6.195297204550798,
+			Longitude: 106.82039546388452,
+		},
 	}
 
 	jsonBytes, _ := protojson.Marshal(&u)
@@ -162,4 +174,34 @@ func JsonToProtoUser() {
 	}
 
 	log.Println(&p)
+}
+
+func BasicOneOf() {
+	// socialMedia := basic.SocialMedia{
+	// 	SocialMediaPlatform: "byteMe",
+	// 	SocialMediaUsername: "aquaman",
+	// }
+
+	// ecomm := basic.User_SocialMedia{
+	// 	SocialMedia: &socialMedia,
+	// }
+
+	instantMessaging := basic.InstantMessaging{
+		InstantMessagingProduct:  "whatsup",
+		InstantMessagingUsername: "atlantis.king",
+	}
+
+	ecomm := basic.User_InstantMessaging{
+		InstantMessaging: &instantMessaging,
+	}
+
+	u := basic.User{
+		Id:                    96,
+		Username:              "aquaman",
+		IsActive:              true,
+		ElectronicCommChannel: &ecomm,
+	}
+
+	jsonBytes, _ := protojson.Marshal(&u)
+	log.Println(string(jsonBytes))
 }

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "proto/google/type/date.proto";
+import "proto/google/type/latlng.proto";
+
+option go_package = "my-protobuf/protogen/basic";
+
+message AdditionalDataTypes { 
+  google.protobuf.Duration my_duration = 1;
+  google.protobuf.Timestamp my_timestamp = 2;
+
+  google.type.Date my_date = 16;
+  google.type.LatLng my_coordinate = 17;
+}

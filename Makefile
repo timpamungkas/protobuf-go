@@ -2,29 +2,24 @@
 tidy:
 	go mod tidy && go mod vendor  
 
-# Windows
 .PHONY: clean
 clean:
+ifeq ($(OS), Windows_NT)
 	if exist "protogen" rd /s /q protogen	
+else
+	rm -fR ./protogen
+endif
 
-# Linux / Mac
-# .PHONY: clean
-# clean:
-#	rm -fR ./protogen
-
-# Windows
 .PHONY: protoc
 protoc:
 	protoc --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
+ifeq ($(OS), Windows_NT)
 	xcopy .\my-protobuf . /E
 	if exist "my-protobuf" rd /s /q my-protobuf	
-
-# Linux / Mac
-# .PHONY: protoc
-# protoc:
-#	protoc --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
-#	cp -fR ./my-protobuf .
-#	rm -fR ./my-protobuf	
+else
+	cp -fR ./my-protobuf .
+	rm -fR ./my-protobuf	
+endif
 
 .PHONY: build
 build: clean protoc tidy
