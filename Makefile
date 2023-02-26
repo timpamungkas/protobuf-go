@@ -18,7 +18,7 @@ endif
 
 .PHONY: protoc
 protoc:
-	protoc --go_opt=module=${GO_MODULE} --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto
+	protoc --go_opt=module=${GO_MODULE} --go_out=. ./proto/basic/*.proto ./proto/dummy/*.proto ./proto/jobsearch/*.proto ./proto/car/*.proto
 
 
 .PHONY: build
@@ -32,3 +32,8 @@ run:
 
 .PHONY: execute
 execute: build run
+
+
+.PHONY: protoc-validate
+protoc-validate:
+	protoc --validate_out="lang=go:./generated" --go_opt=module=${GO_MODULE} --go_out=. ./proto/car/*.proto
